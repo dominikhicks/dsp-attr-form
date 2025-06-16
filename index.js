@@ -1,36 +1,32 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const question3Key = urlParams.get("question3");
-
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const key = params.get("question3");
+  
   const survey = new Survey.Model(json);
-  survey.applyTheme(SurveyTheme.DefaultLightPanelless);
+  survey.applyTheme(Survey.Theme.DefaultLightPanelless);
 
-  function renderSurvey() {
-    survey.render("surveyElement");
+  function initSurvey() {
+    const container = document.getElementById("surveyContainer");
+    survey.render(container);
+    survey.onComplete.add(s => {
+      document.getElementById("output").textContent = 
+        JSON.stringify(s.data, null, 2);
+    });
   }
 
-  if (question3Key) {
+  if (key) {
     fetch("./answers.json")
-      .then((res) => res.json())
-      .then((dataArray) => {
-        if (Array.isArray(dataArray)) {
-          const match = dataArray.find(entry => entry.question3 === question3Key);
-          if (match) {
-            survey.data = match;
-          }
-        }
-        renderSurvey();
+      .then(r => r.json())
+      .then(arr => {
+        const match = arr.find(v => v.question3 === key);
+        if (match) survey.data = match;
+        initSurvey();
       })
-      .catch((err) => {
-        console.warn("answers.json konnt nicht geladen werden:", err);
-        renderSurvey();
+      .catch(err => {
+        console.warn(err);
+        initSurvey();
       });
   } else {
-    renderSurvey();
+    initSurvey();
   }
-
-  survey.onComplete.add((sender) => {
-    const result = JSON.stringify(sender.data, null, 2);
-    document.getElementById("output").textContent = `Antwort:\n\n${result}`;
-  });
 });
