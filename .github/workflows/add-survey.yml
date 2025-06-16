@@ -1,0 +1,28 @@
+name: Add Survey Entry
+
+on:
+  repository_dispatch:
+    types: [new_survey_entry]
+
+jobs:
+  add-survey:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config user.name "survey-bot"
+          git config user.email "survey-bot@users.noreply.github.com"
+
+      - name: Add survey entry to answers.json
+        run: |
+          node .github/scripts/add-survey.js '${{ toJson(github.event.client_payload) }}'
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add answers.json
+          git commit -m "chore: add survey entry for '${{ github.event.client_payload.question3 }}'"
+          git push
