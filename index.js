@@ -15,17 +15,15 @@ if (question3Key) {
           survey.data = match;
         }
       }
-      // Rendern nach Daten-Setzen
-      survey.render("surveyElement");
+      // 🟢 Korrekte Übergabe des DOM-Elements
+      survey.render(document.getElementById("surveyElement"));
     })
     .catch((error) => {
       console.warn("answers.json konnte nicht geladen werden:", error);
-      // Im Fehlerfall trotzdem rendern
-      survey.render("surveyElement");
+      survey.render(document.getElementById("surveyElement"));
     });
 } else {
-  // Ohne URL-Parameter einfach direkt rendern
-  survey.render("surveyElement");
+  survey.render(document.getElementById("surveyElement"));
 }
 
 survey.onComplete.add((sender, options) => {
