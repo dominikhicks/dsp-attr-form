@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>SurveyJS Prefill</title>
-  <script src="https://unpkg.com/survey-core@2.2.0/survey.core.min.js"></script>
-  <script src="https://unpkg.com/survey-core@2.2.0/themes/index.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>SurveyJS mit Prefill</title>
+
+  <!-- Nur survey-js-ui (nicht survey-core separat!) -->
   <script src="https://unpkg.com/survey-js-ui@2.2.0/survey-js-ui.min.js"></script>
   <link href="https://unpkg.com/survey-core@2.2.0/survey-core.min.css" rel="stylesheet" />
 </head>
 <body>
-  <div id="surveyContainer"></div>
-  <pre id="output" style="padding:1em; background:#eee; font-family:monospace;"></pre>
+  <div id="surveyElement" style="margin: 2em;"></div>
+  <pre id="output" style="padding:1em; background:#f3f3f3; font-family:monospace;"></pre>
+
+  <!-- Deine Umfrage-Struktur -->
   <script src="./json.js"></script>
+  <!-- Die Logik -->
   <script src="./index.js"></script>
 </body>
 </html>
