@@ -1,12 +1,7 @@
 [
   {
     "question3": "Test1",
-    "question4": "Beschreibung 1",
-    "question5": "Kunde A"
-  },
-  {
-    "question3": "Test2",
-    "question4": "Beschreibung 2",
-    "question5": "Kunde B"
+    "question4": "Beispielantwort",
+    "question5": "XYZ GmbH"
   }
 ]
