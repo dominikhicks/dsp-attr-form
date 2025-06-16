@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const question3Key = urlParams.get("question3");
 
   const survey = new Survey.Model(json);
-  survey.applyTheme(Survey.Theme.DefaultLightPanelless);
+  survey.applyTheme(SurveyTheme.DefaultLightPanelless);
 
   function renderSurvey() {
     survey.render("surveyElement");
