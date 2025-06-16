@@ -1,32 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const key = params.get("question3");
-  
-  const survey = new Survey.Model(json);
-  survey.applyTheme(Survey.Theme.DefaultLightPanelless);
 
-  function initSurvey() {
-    const container = document.getElementById("surveyContainer");
-    survey.render(container);
-    survey.onComplete.add(s => {
-      document.getElementById("output").textContent = 
-        JSON.stringify(s.data, null, 2);
-    });
-  }
+  fetch("./answers.json")
+    .then(res => res.json())
+    .then(data => {
+      const match = data.find(entry => entry.question3 === key);
+      const model = new Survey.Model(json);
+      if (match) model.data = match;
 
-  if (key) {
-    fetch("./answers.json")
-      .then(r => r.json())
-      .then(arr => {
-        const match = arr.find(v => v.question3 === key);
-        if (match) survey.data = match;
-        initSurvey();
-      })
-      .catch(err => {
-        console.warn(err);
-        initSurvey();
+      const survey = new Survey.Survey({ model });
+      survey.onComplete.add(sender => {
+        console.log("Antworten:", sender.data);
       });
-  } else {
-    initSurvey();
-  }
+
+      survey.render("surveyElement");
+    });
 });
