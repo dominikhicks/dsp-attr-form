@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renderSurvey();
       })
       .catch((err) => {
-        console.warn("answers.json konnte nicht geladen werden:", err);
+        console.warn("answers.json konnt nicht geladen werden:", err);
         renderSurvey();
       });
   } else {
