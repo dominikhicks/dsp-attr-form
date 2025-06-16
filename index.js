@@ -1,20 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const survey = new Survey.Model(json);
-  survey.applyTheme(SurveyTheme.DefaultLightPanelless);
-
   const urlParams = new URLSearchParams(window.location.search);
   const question3Key = urlParams.get("question3");
 
-  const container = document.getElementById("surveyElement");
+  const survey = new Survey.Model(json);
+  survey.applyTheme(SurveyTheme.DefaultLightPanelless);
 
-  if (!container) {
-    console.error("❌ surveyElement nicht gefunden im DOM.");
-    return;
+  const SurveyUI = window.Survey;
+
+  function renderSurvey() {
+    new SurveyUI.Survey({ model: survey }).render("surveyElement");
   }
 
   if (question3Key) {
     fetch("./answers.json")
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((dataArray) => {
         if (Array.isArray(dataArray)) {
           const match = dataArray.find(entry => entry.question3 === question3Key);
@@ -22,17 +21,17 @@ document.addEventListener("DOMContentLoaded", function () {
             survey.data = match;
           }
         }
-        survey.render(container);
+        renderSurvey();
       })
-      .catch((error) => {
-        console.warn("answers.json konnte nicht geladen werden:", error);
-        survey.render(container);
+      .catch((err) => {
+        console.warn("answers.json konnte nicht geladen werden:", err);
+        renderSurvey();
       });
   } else {
-    survey.render(container);
+    renderSurvey();
   }
 
-  survey.onComplete.add((sender, options) => {
-    console.log(JSON.stringify(sender.data, null, 3));
+  survey.onComplete.add((sender) => {
+    console.log("Antworten:", JSON.stringify(sender.data, null, 2));
   });
 });
