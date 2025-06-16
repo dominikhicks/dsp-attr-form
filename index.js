@@ -1,31 +1,34 @@
 const survey = new Survey.Model(json);
 survey.applyTheme(SurveyTheme.DefaultLightPanelless);
 
-// Antworten-Map
-let answerMap = {};
 const urlParams = new URLSearchParams(window.location.search);
-const prefillKey = urlParams.get("usecase");
+const usecaseName = urlParams.get("usecase");
 
-// 1. Lade answers.json via Fetch
+let answersArray = [];
+
+// 🔄 Lade answers.json als Array von Antwortobjekten
 fetch("./answers.json")
   .then((response) => response.json())
   .then((data) => {
-    answerMap = data;
+    answersArray = Array.isArray(data) ? data : [];
 
-    // 2. Wenn usecase angegeben ist → vorausfüllen
-    if (prefillKey && answerMap[prefillKey]) {
-      survey.data = answerMap[prefillKey];
+    // 🔍 Wenn ein UseCase über URL definiert ist → passende Antwort suchen
+    if (usecaseName) {
+      const match = answersArray.find(item => item.question3 === usecaseName);
+      if (match) {
+        survey.data = match;
+      }
     }
 
-    // 3. Render starten
+    // Jetzt rendern
     survey.render("surveyElement");
   })
   .catch((err) => {
-    console.error("answers.json konnte nicht geladen werden:", err);
+    console.warn("answers.json konnte nicht geladen werden:", err);
     survey.render("surveyElement");
   });
 
-// 4. Beim Absenden: Zeige JSON zur manuellen Speicherung
+// ✅ Beim Absenden neue Antwort einfügen & JSON anzeigen
 survey.onComplete.add((sender) => {
   const result = sender.data;
   const key = result["question3"];
@@ -35,9 +38,11 @@ survey.onComplete.add((sender) => {
     return;
   }
 
-  answerMap[key] = result;
+  // Vorherige Antwort mit gleichem question3 überschreiben
+  answersArray = answersArray.filter(item => item.question3 !== key);
+  answersArray.push(result);
 
-  const jsonOutput = JSON.stringify(answerMap, null, 2);
+  const jsonOutput = JSON.stringify(answersArray, null, 2);
   document.getElementById("output").textContent =
-    `✅ Antworten gespeichert unter Schlüssel "${key}".\n\n👉 Kopiere folgenden Inhalt in answers.json:\n\n${jsonOutput}`;
+    `✅ Antworten gespeichert für "${key}".\n\n👉 Kopiere folgenden Inhalt in answers.json:\n\n${jsonOutput}`;
 });
